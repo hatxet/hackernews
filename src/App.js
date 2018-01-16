@@ -21,17 +21,19 @@ const list = [
 ];
 
 class App extends Component {
-  formatUser(user) {
-    return user.first + ' ' + user.last;
-  }
-
   render() {
-    var hW = "Welcome to Road to React";
-    var user = { first: 'Henry', last: 'Frade' };
     return (
       <div className="App">
-        <h2>{hW}</h2>
-        <p>{this.formatUser(user)}</p>
+        {list.map(item =>
+          <div key={item.objectID}>
+            <span>
+              <a href={item.url}>{item.title}</a>
+            </span>
+            <span>{item.author}</span>
+            <span>{item.num_contents}</span>
+            <span>{item.points}</span>
+          </div>
+        )}
       </div>
     );
   }
