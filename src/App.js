@@ -21,6 +21,7 @@ class App extends Component {
     // you have to bind the class method to 'this'
     this.onDismiss = this.onDismiss.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
+    this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);
   }
@@ -42,6 +43,12 @@ class App extends Component {
     })
   }
 
+  onSearchSubmit(event) {
+    const { searchTerm } = this.state;
+    this.fetchSearchTopStories(searchTerm);
+    event.preventDefault();
+  }
+
   setSearchTopStories(result) {
     this.setState({ result });
   }
@@ -57,6 +64,7 @@ class App extends Component {
     const { searchTerm } = this.state;
     this.fetchSearchTopStories(searchTerm);
   }
+
   render() {
     const { searchTerm, result } = this.state;
     return (
@@ -65,6 +73,7 @@ class App extends Component {
           <Search
             value={searchTerm}
             onChange={this.onSearchChange}
+            onSubmit={this.onSearchSubmit}
           >
             Search
          </Search>
@@ -72,7 +81,6 @@ class App extends Component {
         {result &&
           <Table
             list={result.hits}
-            pattern={searchTerm}
             onDismiss={this.onDismiss}
           />}
       </div >
@@ -80,20 +88,22 @@ class App extends Component {
   }
 }
 
-const Search = ({ value, onChange, children }) =>
-  <form>
-    {children}
+const Search = ({ value, onChange, onSubmit, children }) =>
+  <form onSubmit={onSubmit} >
     <input
       type="text"
       value={value}
-      onChange={onChange} />
+      onChange={onChange}
+    />
+    <button type="submit">
+      {children}
+    </button>
   </form>
 
 
-const isSearched = searchTerm => item => item.title.toLowerCase().includes(searchTerm.toLowerCase());
-const Table = ({ list, pattern, onDismiss }) =>
+const Table = ({ list, onDismiss }) =>
   <div className="table">
-    {list.filter(isSearched(pattern)).map(item =>
+    {list.map(item =>
       <div key={item.objectID} className="table-row">
         <Button
           onClick={() => onDismiss(item.objectID)}
